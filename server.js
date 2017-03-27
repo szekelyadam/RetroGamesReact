@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 
 import Game from './app/models/game';
-// import { getGames, getGame, postGame, deleteGame } from './app/routes/game';
+import { getGames, getGame, postGame, deleteGame } from './app/routes/game';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -37,17 +37,17 @@ app.use((req, res, next) => {
 });
 
 // API routes
-//app.route('/games')
+app.route('/games')
     // create game
-//.post(postGame)
+    .post(postGame)
     // get all the games
-//  .get(getGames);
+    .get(getGames);
 
-//app.route('/games/:id')
+app.route('/games/:id')
     // get a single game
-//    .get(getGame)
+    .get(getGame)
     // delete a single game
-//    .delete(deleteGame);
+    .delete(deleteGame);
 
 // ...For all the other requests just sends back the Homepage
 app.route('*').get((req, res) => {
