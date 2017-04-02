@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import Immutable from 'immutable';
 import { Modal, GameListManager } from '../components';
+import * as gamesActionCreators from '../actions/games';
 
-export default class GamesContainer extends Component {
+class GamesContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { games: [], selectedGame: {}, searchBar: '' };
+    this.state = { selectedGame: {}, searchBar: '' };
 
     this.toggleModal = this.toggleModal.bind(this);
     this.deleteGame = this.deleteGame.bind(this);
@@ -17,13 +21,7 @@ export default class GamesContainer extends Component {
   }
 
   getGames() {
-    fetch('http://localhost:8080/games', {
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    })
-    .then(response => response.json())
-    .then(data => this.setState({ games: data }));
+    this.props.gamesActions.getGames();
   }
 
   deleteGame(id) {
@@ -51,7 +49,8 @@ export default class GamesContainer extends Component {
   }
 
   render() {
-    const { games, selectedGame, searchBar } = this.state;
+    const { selectedGame, searchBar } = this.state;
+    const { games } = this.props;
 
     return (
       <div>
@@ -67,3 +66,17 @@ export default class GamesContainer extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    games: state.getIn(['games', 'list'], Immutable.List()).toJS(),
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    gamesActions: bindActionCreators(gamesActionCreators, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GamesContainer);
